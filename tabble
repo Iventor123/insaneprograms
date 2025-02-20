@@ -1,0 +1,61 @@
+import customtkinter as ctk
+
+class CustomTable(ctk.CTkFrame):
+    def __init__(self, master, rows, columns, customisation = ['kk','d'] **kwargs):
+        super().__init__(master, **kwargs)
+        self.rows = rows
+        self.columns = columns
+        self.cells = {}  # Dictionary om cellen op te slaan
+
+        self.create_table()
+
+    def create_table(self):
+        for i in range(self.rows):
+            for j in range(self.columns):
+                entry = ctk.CTkEntry(self, width=80, justify="center")
+                entry.grid(row=i, column=j, padx=5, pady=5)
+                entry.insert(0, f"R{i+1}C{j+1}")  # Vooraf ingevulde waarde
+                self.cells[(i, j)] = entry  # Opslaan in de dictionary met (rij, kolom) als sleutel
+
+    def get_value(self, row, column):
+        """Geeft de waarde terug van een specifieke cel."""
+        if (row, column) in self.cells:
+            return self.cells[(row, column)].get()
+        else:
+            return None  # Geen waarde als de cel niet bestaat
+
+
+
+# Hoofdapplicatie
+ctk.set_appearance_mode("System")
+ctk.set_default_color_theme("blue")
+
+app = ctk.CTk()
+app.title("CTkinter Tabel met Class")
+app.geometry("400x350")
+
+# Maak een tabelobject aan
+table = CustomTable(app, rows=5, columns=3)
+table.pack(pady=20)
+
+# Functie om waarde uit een cel op te halen
+def get_cell_value():
+    row = 2  # Rijen en kolommen beginnen bij 0
+    column = 1
+    value = table.get_value(row, column)
+    if value:
+        result_label.configure(text=f"Waarde in rij {row+1}, kolom {column+1}: {value}")
+    else:
+        result_label.configure(text="Ongeldige rij of kolom")
+
+# Knop om celwaarde op te halen
+check_button = ctk.CTkButton(app, text="Lees waarde uit cel (3,2)", command=get_cell_value)
+check_button.pack(pady=10)
+
+# Label om resultaat te tonen
+result_label = ctk.CTkLabel(app, text="")
+result_label.pack(pady=10)
+
+
+# Start de app
+app.mainloop()
